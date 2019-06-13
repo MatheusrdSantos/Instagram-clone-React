@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import io from 'socket.io-client';
 import './Feed.css';
 import api from '../services/api';
 import more from '../assets/more.svg';
@@ -11,6 +12,7 @@ class Feed extends Component{
     }
 
     async componentDidMount(){
+        this.registerToSocket();
         api({
             method: "get",
             url: 'posts',
@@ -21,6 +23,23 @@ class Feed extends Component{
         }).catch(err => console.log(err));
     }
 
+    registerToSocket = () => {
+        const socket = io('http://localhost:3333');
+        socket.on('newPost', newPost => {
+             this.setState({feed: [newPost, ...this.state.feed]})
+        });
+        socket.on('newLike', likedPost => {
+            //console.log(likedPost)
+            this.setState({
+                feed: this.state.feed.map(post =>{
+                    if(post._id === likedPost._id){
+                        return likedPost;
+                    }
+                    return post;
+                })
+            });
+        });
+    }
     handleLike = (id) => {
         api({
             method: 'post',
