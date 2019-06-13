@@ -20,6 +20,15 @@ class Feed extends Component{
             this.setState({feed: res.data});
         }).catch(err => console.log(err));
     }
+
+    handleLike = (id) => {
+        api({
+            method: 'post',
+            url: `posts/${id}/like`
+        }).then((res) => {
+
+        }).catch((err) => console.log(err));
+    }
     render(){
         return (
             <section id="post-list">
@@ -35,11 +44,13 @@ class Feed extends Component{
                         <img src={`http://localhost:3333/files/${post.image}`} alt=""/>
                         <footer>
                             <div className="actions">
-                                <img src={like} alt="Like"/>
+                                <button type="button" onClick={() => this.handleLike(post._id)}>
+                                    <img src={like} alt="Like"/>
+                                </button>
                                 <img src={comment} alt="Comment"/>
                                 <img src={send} alt="Send"/>
                             </div>
-                            <strong>10 curtidas</strong>
+                            <strong>{post.likes} curtidas</strong>
                             <p>{post.description}<span>{post.hashtags}</span></p>
                         </footer>
                     </article>
